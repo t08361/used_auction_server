@@ -14,7 +14,7 @@ public class Item {
     private String title; // 아이템의 제목
     private String description; // 아이템의 설명
     private int price; // 아이템의 가격
-    private String  endDateTime; // 아이템 경매의 종료 시간
+    private LocalDateTime  endDateTime; // 아이템 경매의 종료 시간
     private int bidUnit; // 아이템의 입찰 단위
     //private String imagePath; // 이미지 파일 경로 (주석 처리됨)
     private String userId; // 상품등록자의 아이디
@@ -53,11 +53,11 @@ public class Item {
         this.price = price; // 가격 값을 설정
     }
 
-    public String getEndDateTime() {
+    public LocalDateTime getEndDateTime() {
         return endDateTime; // 종료 시간 값을 반환
     }
 
-    public void setEndDateTime(String endDateTime) {
+    public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime; // 종료 시간 값을 설정
     }
 
