@@ -13,6 +13,7 @@ public class User {
     private String email;
     private String location;
     private int age;
+    private String profileImage; // 프로필 이미지 필드 추가
 
     // Default constructor
     public User() {
@@ -83,5 +84,13 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
