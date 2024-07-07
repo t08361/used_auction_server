@@ -13,19 +13,21 @@ public class User {
     private String email;
     private String location;
     private int age;
+    private String profileImage; // 프로필 이미지 필드 추가
 
     // Default constructor
     public User() {
     }
 
     // Parameterized constructor
-    public User(String username, String password, String nickname, String email, String location, int age) {
+    public User(String username, String password, String nickname, String email, String location, int age,String profileImage) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
         this.location = location;
         this.age = age;
+        this.profileImage = profileImage;
     }
 
     // Getters and Setters
@@ -83,5 +85,13 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
