@@ -20,13 +20,14 @@ public class User {
     }
 
     // Parameterized constructor
-    public User(String username, String password, String nickname, String email, String location, int age) {
+    public User(String username, String password, String nickname, String email, String location, int age,String profileImage) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
         this.location = location;
         this.age = age;
+        this.profileImage = profileImage;
     }
 
     // Getters and Setters

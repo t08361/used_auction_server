@@ -34,7 +34,7 @@ public class UserController {
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<User> addUser(
             @RequestPart("user") String userJson,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+            @RequestPart(value = "profile_image", required = false) MultipartFile profileImage) {
 
         User user;
         try {
@@ -43,10 +43,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
+        if (profileImage == null) {
+            System.out.println("프로필 이미지 없음");
+        }
         if (profileImage != null && !profileImage.isEmpty()) {
             try {
                 String base64Image = Base64.getEncoder().encodeToString(profileImage.getBytes());
                 user.setProfileImage(base64Image);
+                System.out.println("Profile Image Set: " + base64Image);
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
