@@ -16,7 +16,7 @@ public class Item {
     private int price; // 아이템의 가격
     private LocalDateTime  endDateTime; // 아이템 경매의 종료 시간
     private int bidUnit; // 아이템의 입찰 단위
-    //private String imagePath; // 이미지 파일 경로 (주석 처리됨)
+    private String itemImage; // 이미지 파일 경로
     private String userId; // 상품등록자의 아이디
     private String nickname; // 상품등록자의 닉네임
     // Getters and setters
@@ -84,11 +84,11 @@ public class Item {
         this.nickname = nickname;
     }
 
-//    public String getImagePath() {
-//        return imagePath; // 이미지 파일 경로 값을 반환
-//    }
-//
-//    public void setImagePath(String imagePath) {
-//        this.imagePath = imagePath; // 이미지 파일 경로 값을 설정
-//    }
+    public String getItemImage() {
+        return itemImage;
+    }
+
+    public void setItemImage(String itemImage) {
+        this.itemImage = itemImage;
+    }
 }
