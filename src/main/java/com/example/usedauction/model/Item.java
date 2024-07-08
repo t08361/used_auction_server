@@ -18,7 +18,7 @@ public class Item {
     private int bidUnit; // 아이템의 입찰 단위
     private String itemImage; // 이미지 파일 경로
     private String userId; // 상품등록자의 아이디
-    private String nickname; // 상품등록자의 닉네임
+    private int lastPrice; // 최고가
     // Getters and setters
 
     public String getId() {
@@ -76,19 +76,19 @@ public class Item {
         this.userId = userId;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public String getItemImage() {
         return itemImage;
     }
 
     public void setItemImage(String itemImage) {
         this.itemImage = itemImage;
+    }
+
+    public int getLastPrice() {
+        return lastPrice; // 가격 값을 반환
+    }
+
+    public void setLastPrice(int lastPrice) {
+        this.lastPrice = lastPrice; // 가격 값을 설정
     }
 }

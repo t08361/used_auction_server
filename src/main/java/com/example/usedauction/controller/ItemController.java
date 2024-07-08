@@ -56,7 +56,7 @@ public class ItemController {
             newItem.setEndDateTime(parsedEndDateTime); // 종료 시간 설정
             newItem.setBidUnit(bidUnit); // 입찰 단위 설정
             newItem.setUserId(userId); // 사용자 ID 설정
-            newItem.setNickname(nickname); // 닉네임 설정
+            newItem.setLastPrice(0); // 현재 최고가 설정
 
             if (itemImage != null && !itemImage.isEmpty()) {
                 // 이미지 파일을 Base64로 인코딩
