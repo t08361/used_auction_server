@@ -8,9 +8,10 @@ import org.springframework.http.ResponseEntity; // HTTP 응답을 처리하기 �
 import org.springframework.web.bind.annotation.*; // @RestController, @RequestMapping 등을 import
 import org.springframework.web.multipart.MultipartFile; // 파일 업로드를 위한 클래스를 import
 
-import java.io.File; // 파일 처리를 위한 클래스를 import
+import java.io.IOException;
 import java.time.LocalDateTime; // 날짜 및 시간 처리를 위한 클래스를 import
 import java.time.format.DateTimeFormatter; // 날짜 및 시간 형식을 처리하기 위한 클래스를 import
+import java.util.Base64; // Base64 인코딩을 위한 클래스를 import
 import java.util.List; // 리스트 처리를 위한 클래스를 import
 import java.util.Optional; // Optional 클래스를 import
 
@@ -19,9 +20,6 @@ import java.util.Optional; // Optional 클래스를 import
 public class ItemController {
     @Autowired // 스프링이 ItemService의 인스턴스를 자동으로 주입
     private ItemService itemService;
-
-    // 실제로 파일을 저장할 경로를 올바르게 설정
-    private final String uploadDir = "C:/path/to/save/images/";
 
     @GetMapping // HTTP GET 요청을 처리
     public List<Item> getAllItems() {
@@ -34,48 +32,18 @@ public class ItemController {
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); // 아이템이 존재하면 반환, 없으면 404 상태 반환
     }
 
-//    @PostMapping(consumes = "application/json", produces = "application/json")
-//    public ResponseEntity<String> addItem(@RequestBody Item item) {
-//        try {
-//            // endDateTime을 LocalDateTime으로 변환
-//            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-//            LocalDateTime parsedEndDateTime = LocalDateTime.parse(item.getEndDateTime(), formatter);
-//            item.setEndDateTime(parsedEndDateTime.toString()); // 변환 후 다시 설정
-//
-//            // 아이템 객체 생성 및 데이터베이스에 저장
-//            itemService.addItem(item);
-//
-//            return new ResponseEntity<>("Item added successfully", HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("Failed to add item: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
-    @PostMapping//(consumes = "application/json") // HTTP POST 요청을 처리하며 multipart/form-data 형식을 받음
+    @PostMapping(consumes = {"multipart/form-data"}) // HTTP POST 요청을 처리하며 multipart/form-data 형식을 받음
     public ResponseEntity<String> addItem(
             @RequestParam("title") String title, // 제목 파라미터를 받음
             @RequestParam("description") String description, // 설명 파라미터를 받음
             @RequestParam("price") int price, // 가격 파라미터를 받음
             @RequestParam("endDateTime") String endDateTime, // 종료 시간 파라미터를 받음
-            @RequestParam("bidUnit") int bidUnit // 입찰 단위 파라미터를 받음
-//            @RequestParam("userId") String userId, // 추가
-//            @RequestParam("nickname") String nickname // 추가
-            //@RequestParam("image") MultipartFile image) // 이미지 파일을 받음
-    )
-    {
+            @RequestParam("bidUnit") int bidUnit, // 입찰 단위 파라미터를 받음
+            @RequestParam("userId") String userId, // 상품등록자의 아이디 파라미터를 받음
+            @RequestParam("nickname") String nickname, // 상품등록자의 닉네임 파라미터를 받음
+            @RequestPart(value = "item_image", required = false) MultipartFile itemImage // 이미지 파일 파라미터를 받음
+    ) {
         try {
-            // 디렉터리가 존재하지 않으면 생성
-            File directory = new File(uploadDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            // 이미지 파일 저장
-//            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-//            File file = new File(uploadDir + fileName);
-//            image.transferTo(file);
-
             // 날짜 및 시간 파싱
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; // ISO 형식의 날짜 및 시간 포맷터 생성
             LocalDateTime parsedEndDateTime = LocalDateTime.parse(endDateTime, formatter); // 문자열을 LocalDateTime으로 변환
@@ -87,9 +55,14 @@ public class ItemController {
             newItem.setPrice(price); // 가격 설정
             newItem.setEndDateTime(parsedEndDateTime); // 종료 시간 설정
             newItem.setBidUnit(bidUnit); // 입찰 단위 설정
-//            newItem.setUserId(userId); // 추가
-//            newItem.setNickname(nickname); // 추가
-            //newItem.setImagePath(file.getAbsolutePath()); // 이미지 경로 설정
+            newItem.setUserId(userId); // 사용자 ID 설정
+            newItem.setNickname(nickname); // 닉네임 설정
+
+            if (itemImage != null && !itemImage.isEmpty()) {
+                // 이미지 파일을 Base64로 인코딩
+                String base64Image = Base64.getEncoder().encodeToString(itemImage.getBytes());
+                newItem.setItemImage(base64Image); // Base64 인코딩된 이미지 설정
+            }
 
             itemService.addItem(newItem); // 새로운 아이템을 데이터베이스에 저장
 
