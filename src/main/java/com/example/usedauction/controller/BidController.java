@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/bids")
 public class BidController {
@@ -25,5 +27,10 @@ public class BidController {
         return new ResponseEntity<>(placedBid, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Bid>> getAllBids() {
+        List<Bid> bids = bidService.getAllBids();
+        return new ResponseEntity<>(bids, HttpStatus.OK);
+    }
 
 }
