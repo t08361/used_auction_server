@@ -21,7 +21,7 @@ public class BidController {
         this.bidService = bidService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = {"application/json"})
     public ResponseEntity<Bid> placeBid(@RequestBody Bid bid) {
         Bid placedBid = bidService.placeBid(bid.getItemId(), bid.getBidderId(), bid.getBidAmount());
         return new ResponseEntity<>(placedBid, HttpStatus.CREATED);
