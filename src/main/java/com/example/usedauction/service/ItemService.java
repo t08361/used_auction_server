@@ -8,6 +8,8 @@ import com.example.usedauction.repository.ItemRepository; // Item 리포지토�
 import org.springframework.beans.factory.annotation.Autowired; // Autowired 애너테이션을 임포트
 import org.springframework.stereotype.Service; // Service 애너테이션을 임포트
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List; // 리스트를 임포트
 import java.util.Optional; // Optional을 임포트
 
@@ -35,6 +37,7 @@ public class ItemService {
     public void deleteItem(String id) {
         itemRepository.deleteById(id); // 리포지토리의 deleteById 메서드를 호출하여 특정 아이템을 삭제
     }
+
     public Item updateItem(String id, String title,String description) {
         // 기존 아이템을 찾아 Optional로 반환
         Optional<Item> optionalItem = itemRepository.findById(id);
@@ -49,6 +52,20 @@ public class ItemService {
         } else {
             throw new RuntimeException("Item not found with id " + id);
         }
+    }
+}
+
+
+    public int getCurrentPrice(String itemId) {
+        return itemRepository.findById(itemId)
+                .map(Item::getLastPrice)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+    }
+
+    public Duration getRemainingTime(String itemId) {
+        return itemRepository.findById(itemId)
+                .map(item -> Duration.between(LocalDateTime.now(), item.getEndDateTime()))
+                .orElseThrow(() -> new RuntimeException("Item not found"));
     }
 }
 

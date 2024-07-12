@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*; // @RestController, @RequestMa
 import org.springframework.web.multipart.MultipartFile; // 파일 업로드를 위한 클래스를 import
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime; // 날짜 및 시간 처리를 위한 클래스를 import
 import java.time.format.DateTimeFormatter; // 날짜 및 시간 형식을 처리하기 위한 클래스를 import
 import java.util.Base64; // Base64 인코딩을 위한 클래스를 import
@@ -79,6 +80,7 @@ public class ItemController {
         itemService.deleteItem(id); // 특정 아이템 ID로 아이템을 삭제
         return ResponseEntity.noContent().build(); // 삭제 후 204 No Content 상태를 반환
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updateItem(
             @PathVariable String id,
@@ -95,5 +97,26 @@ public class ItemController {
         }
     }
 
+
+
+    @GetMapping("/{id}/current_price")
+    public ResponseEntity<Integer> getCurrentPrice(@PathVariable String id) {
+        try {
+            int currentPrice = itemService.getCurrentPrice(id);
+            return ResponseEntity.ok(currentPrice);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/remaining_time")
+    public ResponseEntity<Long> getRemainingTime(@PathVariable String id) {
+        try {
+            Duration remainingTime = itemService.getRemainingTime(id);
+            return ResponseEntity.ok(remainingTime.toMinutes());
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
