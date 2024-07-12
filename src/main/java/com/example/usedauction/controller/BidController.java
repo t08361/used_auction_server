@@ -33,4 +33,11 @@ public class BidController {
         return new ResponseEntity<>(bids, HttpStatus.OK);
     }
 
+    @GetMapping("/{itemId}")
+    public ResponseEntity<List<Bid>> getBidsByItemId(@PathVariable String itemId) {
+        System.out.println("Fetching bids for itemId: " + itemId);
+        List<Bid> bids = bidService.getBidsByItemId(itemId);
+        return new ResponseEntity<>(bids, HttpStatus.OK);
+    }
+
 }

@@ -18,6 +18,7 @@ public class BidService {
         this.bidRepository = bidRepository;
     }
 
+    // 입찰 기록을 저장하는 메서드
     public Bid placeBid(String itemId, String bidderId, int bidAmount) {
         Bid bid = new Bid();
         bid.setItemId(itemId);
@@ -25,6 +26,11 @@ public class BidService {
         bid.setBidAmount(bidAmount);
         bid.setBidTime(new Date());
         return bidRepository.save(bid);
+    }
+
+    // 특정 상품의 입찰 기록을 가져오는 메서드
+    public List<Bid> getBidsByItemId(String itemId) {
+        return bidRepository.findByItemId(itemId);
     }
 
 
