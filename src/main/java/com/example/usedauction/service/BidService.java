@@ -2,8 +2,10 @@ package com.example.usedauction.service;
 
 import com.example.usedauction.model.Bid;
 import com.example.usedauction.model.User; // 사용자 정보도 필요함
+import com.example.usedauction.model.Item; // 상품 정보도 필요함
 import com.example.usedauction.repository.BidRepository;
 import com.example.usedauction.repository.UserRepository;
+import com.example.usedauction.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,13 @@ public class BidService {
 
     private final BidRepository bidRepository;
     private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     @Autowired
-    public BidService(BidRepository bidRepository, UserRepository userRepository) {
+    public BidService(BidRepository bidRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.bidRepository = bidRepository;
         this.userRepository = userRepository;
+        this.itemRepository = itemRepository;
     }
 
     // 입찰 기록을 저장하는 메서드
@@ -30,7 +34,14 @@ public class BidService {
         bid.setBidderId(bidderId);
         bid.setBidAmount(bidAmount);
         bid.setBidTime(new Date());
-        return bidRepository.save(bid);
+        Bid savedBid = bidRepository.save(bid); // 입찰기록 저장
+
+        // 상품 collection의 현재 최고가도 업데이트 시켜줘야함
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Item을 찾을 수 없음"));
+        item.setLastPrice(bidAmount);
+        itemRepository.save(item);
+
+        return savedBid;
     }
 
     // 모든 입찰 기록을 가져오는 메서드
