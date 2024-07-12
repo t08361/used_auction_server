@@ -13,6 +13,7 @@ import java.time.LocalDateTime; // 날짜 및 시간 처리를 위한 클래스�
 import java.time.format.DateTimeFormatter; // 날짜 및 시간 형식을 처리하기 위한 클래스를 import
 import java.util.Base64; // Base64 인코딩을 위한 클래스를 import
 import java.util.List; // 리스트 처리를 위한 클래스를 import
+import java.util.Map;
 import java.util.Optional; // Optional 클래스를 import
 
 @RestController // 이 클래스가 RESTful 웹 서비스의 컨트롤러임을 나타냄
@@ -78,4 +79,21 @@ public class ItemController {
         itemService.deleteItem(id); // 특정 아이템 ID로 아이템을 삭제
         return ResponseEntity.noContent().build(); // 삭제 후 204 No Content 상태를 반환
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateItem(
+            @PathVariable String id,
+     @RequestBody Map<String,String> payload)
+      {
+        try{
+       String title=payload.get("title");
+       String description=payload.get("description");
+       itemService.updateItem(id,title,description);
+            return new ResponseEntity<>("success",HttpStatus.OK);
+        }catch(Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("fail"+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

@@ -35,4 +35,20 @@ public class ItemService {
     public void deleteItem(String id) {
         itemRepository.deleteById(id); // 리포지토리의 deleteById 메서드를 호출하여 특정 아이템을 삭제
     }
+    public Item updateItem(String id, String title,String description) {
+        // 기존 아이템을 찾아 Optional로 반환
+        Optional<Item> optionalItem = itemRepository.findById(id);
+
+        // 기존 아이템이 존재하는 경우 수정 후 저장
+        if (optionalItem.isPresent()) {
+            Item existingItem = optionalItem.get();
+            existingItem.setTitle(title);
+            existingItem.setDescription(description);
+
+            return itemRepository.save(existingItem);
+        } else {
+            throw new RuntimeException("Item not found with id " + id);
+        }
+    }
 }
+
