@@ -53,8 +53,6 @@ public class ItemService {
             throw new RuntimeException("Item not found with id " + id);
         }
     }
-}
-
 
     public int getCurrentPrice(String itemId) {
         return itemRepository.findById(itemId)
@@ -68,4 +66,6 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("Item not found"));
     }
 }
+
+
 

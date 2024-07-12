@@ -1,7 +1,7 @@
 package com.example.usedauction.controller;
 
 import com.example.usedauction.model.Item; // Item 모델을 import
-import com.example.usedauction.service.ItemService; // ItemService를 import
+import com.example.usedauction.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired; // @Autowired 어노테이션을 import
 import org.springframework.http.HttpStatus; // HTTP 상태 코드를 import
 import org.springframework.http.ResponseEntity; // HTTP 응답을 처리하기 위한 클래스를 import
