@@ -3,14 +3,17 @@ package com.example.usedauction.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "chatMessages")
 public class ChatMessage {
     @Id
     private String id;
+    private String chatRoomId;
     private String senderId;
     private String recipientId;
     private String content;
-    private long timestamp;
+    private LocalDateTime timestamp;
 
     // Getters and Setters
     public String getId() {
@@ -19,6 +22,14 @@ public class ChatMessage {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
     }
 
     public String getSenderId() {
@@ -45,11 +56,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public long getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }
