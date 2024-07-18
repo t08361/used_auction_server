@@ -28,4 +28,7 @@ public class ChatService {
     public List<ChatMessage> getMessagesForChatRoom(String chatRoomId) {
         return chatMessageRepository.findByChatRoomId(chatRoomId);
     }
+    public List<ChatRoom> getChatRooms() {
+        return chatRoomRepository.findAll();
+    }
 }
