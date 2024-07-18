@@ -39,4 +39,8 @@ public class ChatController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/chatRooms")
+    public ResponseEntity<List<ChatRoom>> getChatRooms() {
+        return ResponseEntity.ok(chatService.getChatRooms());
+    }
 }
