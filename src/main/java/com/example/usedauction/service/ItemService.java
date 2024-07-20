@@ -54,6 +54,18 @@ public class ItemService {
         }
     }
 
+    public void updateWinner(String itemId, String winnerId, int lastPrice) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (!optionalItem.isPresent()) {
+            throw new RuntimeException("Item not found");
+        }
+
+        Item item = optionalItem.get();
+        item.setWinnerId(winnerId);
+        item.setLastPrice(lastPrice);
+        itemRepository.save(item);
+    }
+
     public int getCurrentPrice(String itemId) {
         return itemRepository.findById(itemId)
                 .map(Item::getLastPrice)
@@ -62,10 +74,17 @@ public class ItemService {
 
     public Duration getRemainingTime(String itemId) {
         return itemRepository.findById(itemId)
-                .map(item -> Duration.between(LocalDateTime.now(), item.getEndDateTime()))
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .map(item -> {
+                    LocalDateTime endDateTime = item.getEndDateTime();
+                    if (endDateTime == null) {
+                        throw new RuntimeException("End date time is null for item: " + itemId);
+                    }
+                    return Duration.between(LocalDateTime.now(), endDateTime);
+                })
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 }
+
 
 
 

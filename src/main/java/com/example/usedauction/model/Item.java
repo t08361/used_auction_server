@@ -18,6 +18,7 @@ public class Item {
     private int bidUnit; // 아이템의 입찰 단위
     private String itemImage; // 이미지 파일 경로
     private String userId; // 상품등록자의 아이디
+    private String winnerId; // 위너아이디 추가
     private int lastPrice; // 최고가
     // Getters and setters
 
@@ -75,6 +76,14 @@ public class Item {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+    public String getWinnerId() {
+        return winnerId;
+    }
+
+    public void setWinnerId(String winnerId) {
+        this.winnerId = winnerId;
+    }
+
 
     public String getItemImage() {
         return itemImage;

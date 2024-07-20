@@ -75,6 +75,16 @@ public class ItemController {
         }
     }
 
+    @PutMapping("/{itemId}/winningBid")
+    public ResponseEntity<Void> updateWinner(
+            @PathVariable String itemId,
+            @RequestBody Map<String, Object> updates) {
+        int lastPrice = (int) updates.get("lastPrice");
+        String winnerId = (String) updates.get("winnerId");
+        itemService.updateWinner(itemId, winnerId, lastPrice);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}") // HTTP DELETE 요청을 처리하며 경로 변수로 아이템 ID를 받음
     public ResponseEntity<Void> deleteItem(@PathVariable String id) {
         itemService.deleteItem(id); // 특정 아이템 ID로 아이템을 삭제
