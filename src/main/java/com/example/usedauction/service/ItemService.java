@@ -1,6 +1,3 @@
-// ItemService.java
-// 이 클래스는 아이템(Item) 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
-
 package com.example.usedauction.service;
 
 import com.example.usedauction.model.Item; // Item 모델을 임포트
@@ -38,7 +35,7 @@ public class ItemService {
         itemRepository.deleteById(id); // 리포지토리의 deleteById 메서드를 호출하여 특정 아이템을 삭제
     }
 
-    public Item updateItem(String id, String title,String description) {
+    public Item updateItem(String id, String title, String description, String region) {
         // 기존 아이템을 찾아 Optional로 반환
         Optional<Item> optionalItem = itemRepository.findById(id);
 
@@ -47,6 +44,7 @@ public class ItemService {
             Item existingItem = optionalItem.get();
             existingItem.setTitle(title);
             existingItem.setDescription(description);
+            existingItem.setRegion(region); // region 필드 설정
 
             return itemRepository.save(existingItem);
         } else {
@@ -84,7 +82,3 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 }
-
-
-
-

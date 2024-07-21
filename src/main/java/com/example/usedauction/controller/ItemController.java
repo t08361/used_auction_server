@@ -43,6 +43,7 @@ public class ItemController {
             @RequestParam("bidUnit") int bidUnit, // 입찰 단위 파라미터를 받음
             @RequestParam("userId") String userId, // 상품등록자의 아이디 파라미터를 받음
             @RequestParam("nickname") String nickname, // 상품등록자의 닉네임 파라미터를 받음
+            @RequestParam("region") String region, // 지역 파라미터를 받음
             @RequestPart(value = "item_image", required = false) MultipartFile itemImage // 이미지 파일 파라미터를 받음
     ) {
         try {
@@ -59,6 +60,7 @@ public class ItemController {
             newItem.setBidUnit(bidUnit); // 입찰 단위 설정
             newItem.setUserId(userId); // 사용자 ID 설정
             newItem.setLastPrice(0); // 현재 최고가 설정
+            newItem.setRegion(region); // 지역 설정
 
             if (itemImage != null && !itemImage.isEmpty()) {
                 // 이미지 파일을 Base64로 인코딩
@@ -94,20 +96,18 @@ public class ItemController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateItem(
             @PathVariable String id,
-     @RequestBody Map<String,String> payload)
-      {
-        try{
-       String title=payload.get("title");
-       String description=payload.get("description");
-       itemService.updateItem(id,title,description);
-            return new ResponseEntity<>("success",HttpStatus.OK);
-        }catch(Exception e){
+            @RequestBody Map<String,String> payload) {
+        try {
+            String title = payload.get("title");
+            String description = payload.get("description");
+            String region = payload.get("region"); // 지역 필드 추가
+            itemService.updateItem(id, title, description, region); // 서비스 메서드에 지역 필드 추가
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("fail"+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("fail" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     @GetMapping("/{id}/current_price")
     public ResponseEntity<Integer> getCurrentPrice(@PathVariable String id) {
@@ -128,5 +128,4 @@ public class ItemController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
