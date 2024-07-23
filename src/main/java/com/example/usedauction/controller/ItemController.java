@@ -43,7 +43,7 @@ public class ItemController {
             @RequestParam("bidUnit") int bidUnit, // 입찰 단위 파라미터를 받음
             @RequestParam("userId") String userId, // 상품등록자의 아이디 파라미터를 받음
             @RequestParam("nickname") String nickname, // 상품등록자의 닉네임 파라미터를 받음
-            @RequestPart(value = "item_image", required = false) MultipartFile itemImage // 이미지 파일 파라미터를 받음
+            @RequestParam(value = "itemImage", required = false) String itemImage // 이미지 URL 파라미터를 받음
     ) {
         try {
             // 날짜 및 시간 파싱
@@ -61,9 +61,7 @@ public class ItemController {
             newItem.setLastPrice(0); // 현재 최고가 설정
 
             if (itemImage != null && !itemImage.isEmpty()) {
-                // 이미지 파일을 Base64로 인코딩
-                String base64Image = Base64.getEncoder().encodeToString(itemImage.getBytes());
-                newItem.setItemImage(base64Image); // Base64 인코딩된 이미지 설정
+                newItem.setItemImage(itemImage); // 이미지 URL 설정
             }
 
             itemService.addItem(newItem); // 새로운 아이템을 데이터베이스에 저장
@@ -94,20 +92,18 @@ public class ItemController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateItem(
             @PathVariable String id,
-     @RequestBody Map<String,String> payload)
-      {
+            @RequestBody Map<String,String> payload)
+    {
         try{
-       String title=payload.get("title");
-       String description=payload.get("description");
-       itemService.updateItem(id,title,description);
-            return new ResponseEntity<>("success",HttpStatus.OK);
-        }catch(Exception e){
+            String title = payload.get("title");
+            String description = payload.get("description");
+            itemService.updateItem(id, title, description);
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        } catch(Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("fail"+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("fail" + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     @GetMapping("/{id}/current_price")
     public ResponseEntity<Integer> getCurrentPrice(@PathVariable String id) {
@@ -128,5 +124,4 @@ public class ItemController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
