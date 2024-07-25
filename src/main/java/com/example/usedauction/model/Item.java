@@ -1,6 +1,3 @@
-// Item.java
-// 이 클래스는 MongoDB 컬렉션 "items"에 저장되는 아이템의 모델을 정의합니다.
-
 package com.example.usedauction.model;
 
 import org.springframework.data.annotation.Id; // MongoDB의 ID 필드를 정의하기 위해 임포트
@@ -14,12 +11,14 @@ public class Item {
     private String title; // 아이템의 제목
     private String description; // 아이템의 설명
     private int price; // 아이템의 가격
-    private LocalDateTime  endDateTime; // 아이템 경매의 종료 시간
+    private LocalDateTime endDateTime; // 아이템 경매의 종료 시간
     private int bidUnit; // 아이템의 입찰 단위
     private String itemImage; // 이미지 파일 경로
     private String userId; // 상품등록자의 아이디
     private String winnerId; // 위너아이디 추가
     private int lastPrice; // 최고가
+    private String region; // 지역 필드 추가
+
     // Getters and setters
 
     public String getId() {
@@ -69,35 +68,44 @@ public class Item {
     public void setBidUnit(int bidUnit) {
         this.bidUnit = bidUnit; // 입찰 단위 값을 설정
     }
+
     public String getUserId() {
-        return userId;
+        return userId; // 사용자 ID 값을 반환
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userId = userId; // 사용자 ID 값을 설정
     }
+
     public String getWinnerId() {
-        return winnerId;
+        return winnerId; // 승자 ID 값을 반환
     }
 
     public void setWinnerId(String winnerId) {
-        this.winnerId = winnerId;
+        this.winnerId = winnerId; // 승자 ID 값을 설정
     }
 
-
     public String getItemImage() {
-        return itemImage;
+        return itemImage; // 이미지 경로 값을 반환
     }
 
     public void setItemImage(String itemImage) {
-        this.itemImage = itemImage;
+        this.itemImage = itemImage; // 이미지 경로 값을 설정
     }
 
     public int getLastPrice() {
-        return lastPrice; // 가격 값을 반환
+        return lastPrice; // 최고가 값을 반환
     }
 
     public void setLastPrice(int lastPrice) {
-        this.lastPrice = lastPrice; // 가격 값을 설정
+        this.lastPrice = lastPrice; // 최고가 값을 설정
+    }
+
+    public String getRegion() {
+        return region; // 지역 값을 반환
+    }
+
+    public void setRegion(String region) {
+        this.region = region; // 지역 값을 설정
     }
 }
