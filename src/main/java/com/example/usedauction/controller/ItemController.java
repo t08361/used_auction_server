@@ -6,13 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired; // @Autowired 어
 import org.springframework.http.HttpStatus; // HTTP 상태 코드를 import
 import org.springframework.http.ResponseEntity; // HTTP 응답을 처리하기 위한 클래스를 import
 import org.springframework.web.bind.annotation.*; // @RestController, @RequestMapping 등을 import
-import org.springframework.web.multipart.MultipartFile; // 파일 업로드를 위한 클래스를 import
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime; // 날짜 및 시간 처리를 위한 클래스를 import
 import java.time.format.DateTimeFormatter; // 날짜 및 시간 형식을 처리하기 위한 클래스를 import
-import java.util.Base64; // Base64 인코딩을 위한 클래스를 import
 import java.util.List; // 리스트 처리를 위한 클래스를 import
 import java.util.Map;
 import java.util.Optional; // Optional 클래스를 import
@@ -44,9 +41,7 @@ public class ItemController {
             @RequestParam("userId") String userId, // 상품등록자의 아이디 파라미터를 받음
             @RequestParam("nickname") String nickname, // 상품등록자의 닉네임 파라미터를 받음
             @RequestParam("region") String region, // 지역 파라미터를 받음
-            
-            @RequestParam(value = "itemImage", required = false) String itemImage // 이미지 URL 파라미터를 받음
-
+            @RequestParam(value = "itemImages", required = false) List<String> itemImages // 여러 이미지 URL 파라미터를 받음
     ) {
         try {
             // 날짜 및 시간 파싱
@@ -64,8 +59,8 @@ public class ItemController {
             newItem.setLastPrice(0); // 현재 최고가 설정
             newItem.setRegion(region); // 지역 설정
 
-            if (itemImage != null && !itemImage.isEmpty()) {
-                newItem.setItemImage(itemImage); // 이미지 URL 설정
+            if (itemImages != null && !itemImages.isEmpty()) {
+                newItem.setItemImages(itemImages); // 여러 이미지 URL 설정
             }
 
             itemService.addItem(newItem); // 새로운 아이템을 데이터베이스에 저장
