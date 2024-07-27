@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*; // @RestController, @RequestMa
 import java.time.Duration;
 import java.time.LocalDateTime; // 날짜 및 시간 처리를 위한 클래스를 import
 import java.time.format.DateTimeFormatter; // 날짜 및 시간 형식을 처리하기 위한 클래스를 import
+import java.util.Arrays;
 import java.util.List; // 리스트 처리를 위한 클래스를 import
 import java.util.Map;
 import java.util.Optional; // Optional 클래스를 import
@@ -31,46 +32,45 @@ public class ItemController {
         return item.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); // 아이템이 존재하면 반환, 없으면 404 상태 반환
     }
 
-    @PostMapping(consumes = {"multipart/form-data"}) // HTTP POST 요청을 처리하며 multipart/form-data 형식을 받음
+    @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<String> addItem(
-            @RequestParam("title") String title, // 제목 파라미터를 받음
-            @RequestParam("description") String description, // 설명 파라미터를 받음
-            @RequestParam("price") int price, // 가격 파라미터를 받음
-            @RequestParam("endDateTime") String endDateTime, // 종료 시간 파라미터를 받음
-            @RequestParam("bidUnit") int bidUnit, // 입찰 단위 파라미터를 받음
-            @RequestParam("userId") String userId, // 상품등록자의 아이디 파라미터를 받음
-            @RequestParam("nickname") String nickname, // 상품등록자의 닉네임 파라미터를 받음
-            @RequestParam("region") String region, // 지역 파라미터를 받음
-            @RequestParam(value = "itemImages", required = false) List<String> itemImages // 여러 이미지 URL 파라미터를 받음
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("price") int price,
+            @RequestParam("endDateTime") String endDateTime,
+            @RequestParam("bidUnit") int bidUnit,
+            @RequestParam("userId") String userId,
+            @RequestParam("nickname") String nickname,
+            @RequestParam("region") String region,
+            @RequestParam(value = "itemImages", required = false) String[] itemImages
     ) {
         try {
-            // 날짜 및 시간 파싱
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; // ISO 형식의 날짜 및 시간 포맷터 생성
-            LocalDateTime parsedEndDateTime = LocalDateTime.parse(endDateTime, formatter); // 문자열을 LocalDateTime으로 변환
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            LocalDateTime parsedEndDateTime = LocalDateTime.parse(endDateTime, formatter);
 
-            // 아이템 객체 생성 및 데이터베이스에 저장
-            Item newItem = new Item(); // 새로운 아이템 객체 생성
-            newItem.setTitle(title); // 제목 설정
-            newItem.setDescription(description); // 설명 설정
-            newItem.setPrice(price); // 가격 설정
-            newItem.setEndDateTime(parsedEndDateTime); // 종료 시간 설정
-            newItem.setBidUnit(bidUnit); // 입찰 단위 설정
-            newItem.setUserId(userId); // 사용자 ID 설정
-            newItem.setLastPrice(0); // 현재 최고가 설정
-            newItem.setRegion(region); // 지역 설정
+            Item newItem = new Item();
+            newItem.setTitle(title);
+            newItem.setDescription(description);
+            newItem.setPrice(price);
+            newItem.setEndDateTime(parsedEndDateTime);
+            newItem.setBidUnit(bidUnit);
+            newItem.setUserId(userId);
+            newItem.setLastPrice(0);
+            newItem.setRegion(region);
 
-            if (itemImages != null && !itemImages.isEmpty()) {
-                newItem.setItemImages(itemImages); // 여러 이미지 URL 설정
+            if (itemImages != null && itemImages.length > 0) {
+                newItem.setItemImages(Arrays.asList(itemImages)); // 이미지 URL 배열 설정
             }
 
-            itemService.addItem(newItem); // 새로운 아이템을 데이터베이스에 저장
+            itemService.addItem(newItem);
 
-            return new ResponseEntity<>("Item added successfully", HttpStatus.CREATED); // 성공적으로 추가되었음을 클라이언트에 응답
+            return new ResponseEntity<>("Item added successfully", HttpStatus.CREATED);
         } catch (Exception e) {
-            e.printStackTrace(); // 예외 스택 트레이스를 출력
-            return new ResponseEntity<>("Failed to add item: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 오류 발생 시 클라이언트에 오류 메시지 응답
+            e.printStackTrace();
+            return new ResponseEntity<>("Failed to add item: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @PutMapping("/{itemId}/winningBid")
     public ResponseEntity<Void> updateWinner(
