@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest().permitAll() // 모든 요청에 대해 인증 없이 접근 허용
+                      //  .anyRequest().authenticated()// 모든 요청에 대해 인증 필요
                 )
                 .formLogin(formLoginConfigurer -> formLoginConfigurer.disable()); // 폼 로그인을 비활성화
 
