@@ -1,10 +1,13 @@
 package com.example.usedauction.controller;
 
 import com.example.usedauction.model.Item; // Item 모델을 import
+import com.example.usedauction.model.User;
+import com.example.usedauction.service.UserService;
 import com.example.usedauction.service.ItemService; // Item 서비스 클래스
 import org.springframework.beans.factory.annotation.Autowired; // @Autowired 어노테이션을 import
 import org.springframework.http.HttpStatus; // HTTP 상태 코드를 import
 import org.springframework.http.ResponseEntity; // HTTP 응답을 처리하기 위한 클래스를 import
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*; // @RestController, @RequestMapping 등을 import
 
 import java.time.Duration;
@@ -15,12 +18,20 @@ import java.util.List; // 리스트 처리를 위한 클래스를 import
 import java.util.Map;
 import java.util.Optional; // Optional 클래스를 import
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
 @RestController // 이 클래스가 RESTful 웹 서비스의 컨트롤러임을 나타냄
 @RequestMapping("/api/items") // 이 컨트롤러의 기본 URL 경로를 설정
 public class ItemController {
 
     @Autowired // 스프링이 ItemService의 인스턴스를 자동으로 주입
     private ItemService itemService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping // HTTP GET 요청을 처리
     public List<Item> getAllItems() {
@@ -34,6 +45,7 @@ public class ItemController {
     }
 
     // 새로운 아이템을 추가하는 HTTP POST 요청을 처리 (multipart/form-data 형식으로 데이터 받음)
+    @PreAuthorize("isAuthenticated()") // 이 메서드에 대해 인증이 필요함을 명시
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<String> addItem(
             @RequestParam("title") String title,
@@ -41,37 +53,58 @@ public class ItemController {
             @RequestParam("price") int price,
             @RequestParam("endDateTime") String endDateTime,
             @RequestParam("bidUnit") int bidUnit,
-            @RequestParam("userId") String userId,
-            @RequestParam("nickname") String nickname,
             @RequestParam("region") String region,
             @RequestParam(value = "itemImages", required = false) String[] itemImages // 이미지 URL 배열
     ) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; // 날짜 및 시간 형식 설정
-            LocalDateTime parsedEndDateTime = LocalDateTime.parse(endDateTime, formatter); // 문자열을 LocalDateTime으로 변환
+            // 현재 인증된 사용자의 정보를 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            Item newItem = new Item();  // 새로운 아이템 객체 생성
-            newItem.setTitle(title);
-            newItem.setDescription(description);
-            newItem.setPrice(price);
-            newItem.setEndDateTime(parsedEndDateTime);
-            newItem.setBidUnit(bidUnit);
-            newItem.setUserId(userId);
-            newItem.setLastPrice(0); // 초기 입찰가는 0으로 설정
-            newItem.setRegion(region);
+            // 사용자의 이메일을 저장할 변수를 선언합니다.
+            String email;
 
-            if (itemImages != null && itemImages.length > 0) {
-                newItem.setItemImages(Arrays.asList(itemImages)); // 이미지 URL 배열 설정
+            // 인증 정보에서 사용자의 주체(Principal)를 가져옵니다.
+            // 주체가 UserDetails 타입이면, 이메일을 얻기 위해 getUsername()을 호출합니다.
+            if (authentication.getPrincipal() instanceof UserDetails) {
+                email = ((UserDetails) authentication.getPrincipal()).getUsername();
+            } else {
+                // 주체가 UserDetails 타입이 아니면, 주체의 toString()을 사용해 문자열로 변환합니다.
+                email = authentication.getPrincipal().toString();
             }
 
-            itemService.addItem(newItem); // 새로운 아이템을 서비스 계층을 통해 저장
 
-            return new ResponseEntity<>("Item added successfully", HttpStatus.CREATED); // 성공 메시지와 함께 201 Created 반환
+            // 사용자 정보를 이용하여 데이터 저장 로직 처리 (예: 사용자 ID 찾기)
+            Optional<User> user = userService.getUserByEmail(email); // 사용자 서비스에서 이메일로 사용자 찾기
+            if (user.isPresent()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME; // 날짜 및 시간 형식 설정
+                LocalDateTime parsedEndDateTime = LocalDateTime.parse(endDateTime, formatter); // 문자열을 LocalDateTime으로 변환
+
+                Item newItem = new Item();  // 새로운 아이템 객체 생성
+                newItem.setTitle(title);
+                newItem.setDescription(description);
+                newItem.setPrice(price);
+                newItem.setEndDateTime(parsedEndDateTime);
+                newItem.setBidUnit(bidUnit);
+                newItem.setUserId(user.get().getId()); // 사용자 ID 설정
+                newItem.setLastPrice(0); // 초기 입찰가는 0으로 설정
+                newItem.setRegion(region);
+
+                if (itemImages != null && itemImages.length > 0) {
+                    newItem.setItemImages(Arrays.asList(itemImages)); // 이미지 URL 배열 설정
+                }
+
+                itemService.addItem(newItem); // 새로운 아이템을 서비스 계층을 통해 저장
+
+                return new ResponseEntity<>("Item added successfully", HttpStatus.CREATED); // 성공 메시지와 함께 201 Created 반환
+            } else {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Failed to add item: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 오류 메시지와 함께 500 Internal Server Error 반환
         }
     }
+
 
     // 경매 우승자를 업데이트하는 HTTP PUT 요청을 처리
     @PutMapping("/{itemId}/winningBid")
