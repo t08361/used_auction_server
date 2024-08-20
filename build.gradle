@@ -43,6 +43,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
 	implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+
 }
 
 test {

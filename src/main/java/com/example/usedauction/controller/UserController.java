@@ -86,6 +86,7 @@ public class UserController {
 //            System.out.println("User ID: " + user.get().getId());
 //            System.out.println("Nickname: " + user.get().getNickname());
 //            System.out.println("Email: " + user.get().getEmail());
+//            System.out.println(token);
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
