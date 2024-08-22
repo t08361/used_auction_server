@@ -37,7 +37,7 @@ public class ItemController {
     public List<Item> getAllItems() {
         return itemService.getAllItems(); // 모든 아이템을 조회하여 반환
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}") // HTTP GET 요청을 처리하며 경로 변수로 아이템 ID를 받음
     public ResponseEntity<Item> getItemById(@PathVariable String id) {
         Optional<Item> item = itemService.getItemById(id); // 특정 아이템 ID로 아이템을 조회
@@ -107,28 +107,67 @@ public class ItemController {
 
 
     // 경매 우승자를 업데이트하는 HTTP PUT 요청을 처리
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{itemId}/winningBid")
     public ResponseEntity<Void> updateWinner(
             @PathVariable String itemId, // 경로 변수로 아이템 ID를 받음
             @RequestBody Map<String, Object> updates) { // 요청 본문에서 업데이트할 데이터를 받음
+
+        // 인증된 사용자의 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email;
+
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else {
+            email = authentication.getPrincipal().toString();
+        }
+
+        System.out.println("Authenticated user's email: " + email);
+
         int lastPrice = (int) updates.get("lastPrice");  // 마지막 입찰가를 추출
         String winnerId = (String) updates.get("winnerId"); // 우승자 ID를 추출
         itemService.updateWinner(itemId, winnerId, lastPrice); // 우승자 정보 업데이트
         return ResponseEntity.ok().build(); // 200 OK 상태 반환
     }
 
-    // 특정 아이템을 삭제하는 HTTP DELETE 요청을 처리
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}") // 특정 아이템 ID로 아이템을 삭제
     public ResponseEntity<Void> deleteItem(@PathVariable String id) {
+        // 인증된 사용자의 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email;
+
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else {
+            email = authentication.getPrincipal().toString();
+        }
+
+        System.out.println("Authenticated user's email: " + email);
+
         itemService.deleteItem(id); // 특정 아이템 ID로 아이템을 삭제
         return ResponseEntity.noContent().build(); // 삭제 후 204 No Content 상태를 반환
     }
 
-    // 특정 아이템의 정보를 업데이트하는 HTTP PUT 요청을 처리
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateItem(
             @PathVariable String id,
             @RequestBody Map<String, String> payload) {  // 요청 본문에서 업데이트할 데이터를 받음
+
+        // 인증된 사용자의 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email;
+
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else {
+            email = authentication.getPrincipal().toString();
+        }
+
+        System.out.println("Authenticated user's email: " + email);
+
         try {
             String title = payload.get("title");  // 제목을 추출
             String description = payload.get("description"); // 설명을 추출
@@ -140,6 +179,7 @@ public class ItemController {
             return new ResponseEntity<>("fail: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     // 특정 아이템의 현재 가격을 조회하는 HTTP GET 요청을 처리
     @GetMapping("/{id}/current_price")
