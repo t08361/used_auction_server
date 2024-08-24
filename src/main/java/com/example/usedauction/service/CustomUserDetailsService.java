@@ -24,10 +24,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        // 비밀번호가 null인 경우 더미 비밀번호 설정
+        String password = user.getPassword() != null ? user.getPassword() : "{noop}dummy-password";
+
         // User 객체를 Spring Security의 UserDetails로 변환
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(user.getPassword())
+                .password(password) // 더미 비밀번호 설정
                 .authorities("USER")  // 권한 설정
                 .build();
     }
