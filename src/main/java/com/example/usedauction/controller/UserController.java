@@ -51,22 +51,9 @@ public class UserController {
         return userService.getAllUsers(); // 모든 사용자 정보를 반환
     }
 
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable String id) {
-        // 인증된 사용자의 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email;
-
-        // 인증 정보에서 사용자의 주체(Principal)를 가져옵니다.
-        if (authentication.getPrincipal() instanceof UserDetails) {
-            email = ((UserDetails) authentication.getPrincipal()).getUsername();
-        } else {
-            email = authentication.getPrincipal().toString();
-        }
-
-        System.out.println("Authenticated user's email: " + email);
-
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }

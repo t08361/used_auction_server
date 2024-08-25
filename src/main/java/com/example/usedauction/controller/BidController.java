@@ -72,10 +72,9 @@ public class BidController {
     }
 
     // 특정 상품의 입찰 기록을 가져오는 엔드포인트
-    @GetMapping("/{itemId}")  // GET 요청을 처리하여 특정 상품의 입찰 기록을 반환
+    @GetMapping("/{itemId}")
     public ResponseEntity<List<BidWithNickname>> getBidsByItemId(@PathVariable String itemId) {
-        // BidService를 통해 특정 상품의 입찰 기록과 닉네임 정보를 조회
         List<BidWithNickname> bids = bidService.getBidsByItemId(itemId);
-        return new ResponseEntity<>(bids, HttpStatus.OK);  // 조회된 정보를 HTTP 상태 코드 200 (OK)와 함께 반환
+        return new ResponseEntity<>(bids, HttpStatus.OK);
     }
 }
